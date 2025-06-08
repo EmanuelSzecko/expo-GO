@@ -51,7 +51,7 @@ return (
     <View style={styles.container}>
       {/* VÍDEO DE FUNDO */}
       <Video
-        source={require('./assets/video/naruto.mp4')}
+        source={require('./assets/video/naruto3.mp4')}
         style={StyleSheet.absoluteFill}
         resizeMode="cover"
         isMuted

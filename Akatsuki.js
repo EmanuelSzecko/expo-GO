@@ -4,83 +4,111 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  ScrollView,
   TouchableOpacity,
-  ImageBackground
+  ScrollView,
+  Image
 } from 'react-native';
 import { Video } from 'expo-av';
 
-export default function Akatsuki({ navigation }) {
-  const [membro, setMembro] = useState(null);
-  const [inputId, setInputId] = useState('');
+export default function Akatsuki({ navigation, route }) {
+  const [personagem, setPersonagem] = useState(null);
+  const [inputName, setInputName] = useState('');
   const [loading, setLoading] = useState(false);
+  const { listaPersonagens } = route.params;
 
-  const buscarMembro = async () => {
+  const buscar = () => {
     setLoading(true);
-    try {
-    
-      const response = await fetch(`https:naruto-br-api.site/characters/${inputId}`);
-      const data = await response.json();
-      setMembro(data);
-    } catch (error) {
-      alert('Erro ao buscar membro. Verifique o ID e tente novamente.');
+    setPersonagem(null);
+
+    const nomeBuscado = inputName.toLowerCase();
+
+    for (let i = 0; i < listaPersonagens.length; i++) {
+      const p = listaPersonagens[i];
+
+      if (p.name.toLowerCase().includes(nomeBuscado)) {
+        const personagemFiltrado = {
+          name: p.name,
+          rank: p.rank,
+          power: p.power,
+          profile_image: p.profile_image,
+          summary: p.summary,
+          village: {
+            name: p.village?.name || 'Desconhecida'
+          }
+        };
+
+        setPersonagem(personagemFiltrado);
+        setLoading(false);
+        return;
+      }
     }
+
+    alert('Ninja não encontrado!');
     setLoading(false);
   };
 
   return (
-    
-      <View style={styles.overlay}>
-        <Video
-          source={require('./assets/video/naruto2.mp4')}
-          style={StyleSheet.absoluteFill}
-          resizeMode="cover"
-          isMuted
-          shouldPlay
-          isLooping
-        />
+    <View style={styles.container}>
+      <Video
+        source={require('./assets/video/naruto2.mp4')}
+        style={StyleSheet.absoluteFill}
+        resizeMode="cover"
+        isMuted
+        shouldPlay
+        isLooping
+      />
 
+      <View style={styles.overlay}>
         <Text style={styles.title}>🌑 Akatsuki</Text>
 
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Digite o ID do membro"
+            placeholder="Digite o nome do membro"
             placeholderTextColor="#AAA"
-            keyboardType="numeric"
-            value={inputId}
-            onChangeText={(id) => setInputId(id)}
+            value={inputName}
+            onChangeText={setInputName}
           />
-          <TouchableOpacity style={styles.button} onPress={buscarMembro}>
+          <TouchableOpacity style={styles.button} onPress={buscar}>
             <Text style={styles.buttonText}>Buscar</Text>
           </TouchableOpacity>
         </View>
 
-        {loading && <Text style={styles.message}>Carregando membro...</Text>}
+        {loading && <Text style={styles.message}>Carregando personagem...</Text>}
 
-        {!loading && membro && (
+        {!loading && personagem && (
           <ScrollView style={styles.card}>
-            <Text style={styles.name}>{membro.name}</Text>
-            <Text style={styles.detail}>Aldeia: {membro.village}</Text>
-            <Text style={styles.detail}>Rank: {membro.rank}</Text>
-            <Text style={styles.detail}>Descrição: {membro.description}</Text>
+            <Image source={{ uri: personagem.profile_image }} style={styles.avatar} />
+            <Text style={styles.name}>{personagem.name}</Text>
+            <Text style={styles.detail}>
+              <Text style={styles.label}>Vila: </Text>{personagem.village.name}
+            </Text>
+            <Text style={styles.detail}>
+              <Text style={styles.label}>Rank: </Text>{personagem.rank}
+            </Text>
+            <Text style={styles.detail}>
+              <Text style={styles.label}>Poder: </Text>{personagem.power}
+            </Text>
+            <Text style={styles.detail}>
+              <Text style={styles.label}>Descrição: </Text>{personagem.summary || 'Sem descrição'}
+            </Text>
           </ScrollView>
         )}
 
-        {!membro && !loading && (
-          <Text style={styles.message}>Digite um ID para ver um membro da Akatsuki!</Text>
+        {!personagem && !loading && (
+          <Text style={styles.message}>Digite o nome de um personagem!</Text>
         )}
 
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backText}>← Voltar</Text>
         </TouchableOpacity>
       </View>
-    
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
+  container: { flex: 1 },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.85)',
@@ -127,7 +155,16 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 15,
     marginTop: 10,
-    width: '100%'
+    width: '100%',
+    maxWidth: 340
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 10,
+    borderWidth: 3,
+    borderColor: '#B71C1C'
   },
   name: {
     fontSize: 22,
@@ -140,6 +177,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#DDD',
     marginBottom: 8
+  },
+  label: {
+    fontWeight: 'bold',
+    color: '#E53935'
   },
   backButton: {
     position: 'absolute',

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 export default function Home({ navigation, route }) {
-  const{listaPersonagens}=route.params;
+  const { listaPersonagens } = route.params;
 
   return (
     <ImageBackground
@@ -20,41 +20,38 @@ export default function Home({ navigation, route }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>🏯 Bem-vindo ao Mundo Ninja</Text>
 
+
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
-            navigation.navigate('CharacterDetails', { listaPersonagens:listaPersonagens} )}
+            navigation.navigate('CharacterDetails', { listaPersonagens: listaPersonagens })}
         >
           <Text style={styles.buttonText}> Ver Detalhes de ninja</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Jutsus',{ listaPersonagens:listaPersonagens})}
+          onPress={() => navigation.navigate('Jutsus', { listaPersonagens: listaPersonagens })}
         >
           <Text style={styles.buttonText}>Jutsus</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Clans')}
-        >
-          <Text style={styles.buttonText}> Clãs</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Bijuus')}
-        >
-          <Text style={styles.buttonText}> Bestas com Cauda</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Akatsuki')}
+          onPress={() => navigation.navigate('Akatsuki', { listaPersonagens: listaPersonagens })}
         >
           <Text style={styles.buttonText}> Akatsuki</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('PersonagensFamosos')}
+        >
+          <Text style={styles.buttonText}>Personagens Famosos</Text>
+        </TouchableOpacity>
+
+
+
+
       </ScrollView>
     </ImageBackground>
   );
@@ -62,13 +59,17 @@ export default function Home({ navigation, route }) {
 
 const styles = StyleSheet.create({
   background: {
-    flex: 1
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
+    justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 40,
     paddingHorizontal: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)'
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    minHeight: '100%',
   },
   title: {
     fontSize: 28,

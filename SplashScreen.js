@@ -17,7 +17,7 @@ const SplashScreen = () => {
         setTimeout(() => {
           setIsLoading(false);
           navigation.replace('Home', { listaPersonagens: data }); // envia todos os dados para a Home
-        }, 9000);
+        }, 17000);
       } catch (error) {
         alert('Não foi possível carregar os personagens.');
         setIsLoading(false);
@@ -31,17 +31,16 @@ const SplashScreen = () => {
     return (
       <View style={styles.splashContainer}>
         <Video
-          source={require('./assets/video/naruto.mp4')}
+          source={require('./assets/video/naruto5.mp4')}
           style={{
             width: 404,
-            height: 180,
-            marginVertical: 20,
-            borderRadius: 12,
-          }}
+            height: 750,
+           }}
           resizeMode="cover"
           isLooping={false}
           shouldPlay
           isMuted
+        
         />
       </View>
     );

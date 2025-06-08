@@ -9,6 +9,8 @@ import Clans from './Clans';
 import Akatsuki from './Akatsuki';
 import Bijuus from './Bijuus';
 import SplashScreen from './SplashScreen'; // Importe a SplashScreen
+import PersonagensFamosos from './PersonagensFamosos';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +53,13 @@ export default function Routes() {
           component={Bijuus}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="PersonagensFamosos"
+          component={PersonagensFamosos}
+          options={{ headerShown: false }}
+        />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  ScrollView,
+  FlatList,
 } from 'react-native';
 import { Video } from 'expo-av';
 
@@ -21,32 +21,34 @@ export default function Jutsus({ navigation, route }) {
 
     const nomeBuscado = inputName.toLowerCase();
 
-    for (let i = 0; i < listaPersonagens.length; i++) {
-      const j =  listaPersonagens [i];
+    const personagem = listaPersonagens.find(p =>
+      p.name.toLowerCase().includes(nomeBuscado)
+    );
 
-      if (j.name.toLowerCase().includes(nomeBuscado)) {
-        const jutsuFiltrado = {
-          name: j.name,
-          rank: j.rank,
-          type: j.jutsu_type,
-          description: j.description,
-        };
-
-        setJutsu(jutsuFiltrado);
-        setLoading(false);
-        return;
-      }
+    if (personagem && personagem.jutsus && personagem.jutsus.length > 0) {
+      setJutsu({
+        name: personagem.name,
+        jutsus: personagem.jutsus,
+      });
+    } else {
+      alert('Jutsus não encontrados para este personagem.');
     }
 
-    alert('Jutsu não encontrado!');
     setLoading(false);
   };
 
+  // Usando for para montar a lista
+  let listaFormatada = [];
+  if (jutsu && jutsu.jutsus && jutsu.jutsus.length > 0) {
+    for (let i = 0; i < jutsu.jutsus.length; i++) {
+      listaFormatada.push(jutsu.jutsus[i]);
+    }
+  }
+
   return (
     <View style={styles.container}>
-      {/* VÍDEO DE FUNDO */}
       <Video
-        source={require('./assets/video/naruto.mp4')} 
+        source={require('./assets/video/naruto4.mp4')}
         style={StyleSheet.absoluteFill}
         resizeMode="cover"
         isMuted
@@ -54,14 +56,13 @@ export default function Jutsus({ navigation, route }) {
         isLooping
       />
 
-      {/* CAMADA ESCURA */}
       <View style={styles.overlay}>
         <Text style={styles.title}>🌀 Buscar Jutsu</Text>
 
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Digite o nome do jutsu"
+            placeholder="Digite o nome do personagem"
             placeholderTextColor="#AAA"
             onChangeText={(text) => setInputName(text)}
             value={inputName}
@@ -72,24 +73,32 @@ export default function Jutsus({ navigation, route }) {
         </View>
 
         {!loading && jutsu && (
-          <ScrollView style={styles.card}>
+          <View style={styles.card}>
             <Text style={styles.name}>{jutsu.name}</Text>
-            <Text style={styles.detail}>
-              <Text style={styles.label}>Rank: </Text>{jutsu.rank || 'Desconhecido'}
-            </Text>
-            <Text style={styles.detail}>
-              <Text style={styles.label}>Tipo: </Text>{jutsu.type || 'Desconhecido'}
-            </Text>
-            <Text style={styles.detail}>
-              <Text style={styles.label}>Descrição: </Text>{jutsu.description || 'Sem descrição'}
-            </Text>
-          </ScrollView>
+            <FlatList
+              data={listaFormatada}
+
+              renderItem={({ item }) => (
+                <View style={{ marginBottom: 15 }}>
+                  <Text style={styles.detail}>
+                    <Text style={styles.label}>Nome: </Text>{item.name}
+                  </Text>
+                  <Text style={styles.detail}>
+                    <Text style={styles.label}>Tipo: </Text>{item.type || 'Desconhecido'}
+                  </Text>
+                  <Text style={styles.detail}>
+                    <Text style={styles.label}>Descrição: </Text>{item.description || 'Sem descrição'}
+                  </Text>
+                </View>
+              )}
+            />
+          </View>
         )}
 
         {loading && <Text style={styles.loading}>Carregando jutsu...</Text>}
 
         {!jutsu && !loading && (
-          <Text style={styles.message}>Digite o nome de um jutsu ninja!</Text>
+          <Text style={styles.message}>Digite o nome de um personagem ninja!</Text>
         )}
 
         <TouchableOpacity style={styles.floatingBackButton} onPress={() => navigation.goBack()}>
@@ -129,7 +138,6 @@ const styles = StyleSheet.create({
     width: 140,
     marginRight: 10,
     color: '#FFF',
-    fontFamily: 'Roboto',
   },
   button: {
     backgroundColor: '#00ACC1',
@@ -141,7 +149,6 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 14,
-    fontFamily: 'Roboto',
   },
   card: {
     backgroundColor: '#1A1A1A',
@@ -157,7 +164,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 6,
     textAlign: 'center',
-    fontFamily: 'Roboto',
   },
   detail: {
     fontSize: 14,
@@ -195,6 +201,5 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 14,
     fontWeight: 'bold',
-    fontFamily: 'Roboto',
   },
 });
